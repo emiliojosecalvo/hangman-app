@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { randomWord } from './words';
 import "./Hangman.css";
 import img0 from "./0.jpg";
 import img1 from "./1.jpg";
@@ -17,8 +18,17 @@ class Hangman extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { nWrong: 0, guessed: new Set(), answer: "apple" };
+    this.state = { nWrong: 0, guessed: new Set(), answer: randomWord() };
     this.handleGuess = this.handleGuess.bind(this);
+    this.restart = this.restart.bind(this);
+  }
+
+  restart() {
+    this.setState({
+      answer: randomWord(),
+      guessed: new Set(),
+      nWrong: 0
+    })
   }
 
   /** guessedWord: show current-state of word:
@@ -44,8 +54,9 @@ class Hangman extends Component {
 
   /** generateButtons: return array of letter buttons to render */
   generateButtons() {
-    return "abcdefghijklmnopqrstuvwxyz".split("").map(ltr => (
+    return "abcdefghijklmnopqrstuvwxyz".split("").map((ltr, idx) => (
       <button
+        key={idx}
         value={ltr}
         onClick={this.handleGuess}
         disabled={this.state.guessed.has(ltr)}
@@ -57,12 +68,27 @@ class Hangman extends Component {
 
   /** render: render game */
   render() {
+    const gameOver = this.state.nWrong >= this.props.maxWrong;
+    const altText = `${this.state.nWrong}/${this.props.maxWrong} guesses`;
+    const isWinner = this.guessedWord().join('') === this.state.answer;
+    let gameState = this.generateButtons();
+    if (gameOver) { gameState = 'You Loser' }
+    if (isWinner) { gameState = 'You WIN ' }
     return (
       <div className='Hangman'>
         <h1>Hangman</h1>
-        <img src={this.props.images[this.state.nWrong]} />
-        <p className='Hangman-word'>{this.guessedWord()}</p>
-        <p className='Hangman-btns'>{this.generateButtons()}</p>
+        <img src={this.props.images[this.state.nWrong]} alt={altText} />
+        <p>Guessed Wrong: {this.state.nWrong}</p>
+        <p className='Hangman-word'>
+          {!gameOver ? //if the game is not over then
+            this.guessedWord() : // render the word that is guessing or 
+            this.state.answer //render the answer if the game is finished
+          }
+        </p>
+        <p className='Hangman-btns'>
+          {gameState}
+        </p>
+        <button id="restartBtn" onClick={this.restart}>Restart ?</button>
       </div>
     );
   }
