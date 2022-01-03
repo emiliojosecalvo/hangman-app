@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { randomWord } from './words';
 import "./Hangman.css";
-import img0 from "./0.jpg";
-import img1 from "./1.jpg";
-import img2 from "./2.jpg";
-import img3 from "./3.jpg";
-import img4 from "./4.jpg";
-import img5 from "./5.jpg";
-import img6 from "./6.jpg";
+import img0 from "./img/0.jpg";
+import img1 from "./img/1.jpg";
+import img2 from "./img/2.jpg";
+import img3 from "./img/3.jpg";
+import img4 from "./img/4.jpg";
+import img5 from "./img/5.jpg";
+import img6 from "./img/6.jpg";
 
 class Hangman extends Component {
   /** by default, allow 6 guesses and use provided gallows images. */
@@ -68,21 +68,21 @@ class Hangman extends Component {
 
   /** render: render game */
   render() {
-    const gameOver = this.state.nWrong >= this.props.maxWrong;
     const altText = `${this.state.nWrong}/${this.props.maxWrong} guesses`;
-    const isWinner = this.guessedWord().join('') === this.state.answer;
     let gameState = this.generateButtons();
-    if (gameOver) { gameState = 'You Loser' }
-    if (isWinner) { gameState = 'You WIN ' }
+    const gameOver = this.state.nWrong >= this.props.maxWrong;
+    const isWinner = this.guessedWord().join('') === this.state.answer;
+    if (gameOver) { gameState = 'You Lose =(' }
+    if (isWinner) { gameState = 'You WIN =)' }
     return (
       <div className='Hangman'>
         <h1>Hangman</h1>
         <img src={this.props.images[this.state.nWrong]} alt={altText} />
         <p>Guessed Wrong: {this.state.nWrong}</p>
         <p className='Hangman-word'>
-          {!gameOver ? //if the game is not over then
-            this.guessedWord() : // render the word that is guessing or 
-            this.state.answer //render the answer if the game is finished
+          {this.state.nWrong >= this.props.maxWrong ? //if the game is not over then
+            this.state.answer ://render the answer if the game is finished
+            this.guessedWord()  // render the word that is guessing or 
           }
         </p>
         <p className='Hangman-btns'>
